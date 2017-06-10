@@ -5,7 +5,7 @@
 // it will then show the drawing on the canvas
 
 var data = {
-  width: 124, height: 147, image_index_str: "TAUNT_STANDARD",
+  width: 124, height: 147, image_index_str: "BLOCK_STANDARD",
   ellipse: { x: 67, y: 37, width: 55, height: 35 },
   title: { x: 48, y: 20, text: "TAUNT" },
   description: [ { x: 20, y: 40, text: "Forces an enemy" }, { x: 33, y: 55, text: "to attack you" } ],

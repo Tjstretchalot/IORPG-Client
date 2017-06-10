@@ -1024,7 +1024,7 @@ iorpg.create_spell_lesser_heal_unhovered = function() {
   return canv;
 };
 
-iorpg.create_spell_lesser_heal_hovered = function() { //197x87
+iorpg.create_spell_lesser_heal_hovered = function() { 
   var data = {"width":146,"height":154,"image_index_str":"LESSER_HEAL_STANDARD","ellipse":{"x":73.5,"y":40.5,"width":70,"height":40},"title":{"x":32,"y":25,"text":"LESSER HEAL"},"description":[{"x":14,"y":46,"text":"A fast, moderate heal"},{"x":25,"y":61,"text":"but it's expensive"}],"v_bottom":{"x":38,"y":88},"v_0":{"x":45,"y":76},"v_1":{"x":34,"y":74}};
   return this.create_spell_hovered_from_data(data);
 };
@@ -1032,6 +1032,19 @@ iorpg.create_spell_lesser_heal_hovered = function() { //197x87
 iorpg.create_spell_lesser_heal_pressed = function() {
   return this.create_spell_pressed(this.IMAGES.LESSER_HEAL_HOVERED);
 };
+
+iorpg.create_spell_greater_heal_unhovered = function() {
+  return this.create_spell_needs_art();
+};
+
+iorpg.create_spell_greater_heal_hovered = function() {
+  var data = {"width":184,"height":147,"image_index_str":"GREATER_HEAL_STANDARD","ellipse":{"x":97,"y":37,"width":85,"height":35},"title":{"x":54,"y":20,"text":"GREATER HEAL"},"description":[{"x":35,"y":40,"text":"Infuse an ally with an"},{"x":50,"y":55,"text":"incredible vigor"}],"v_bottom":{"x":50,"y":81},"v_0":{"x":50,"y":60},"v_1":{"x":60,"y":67}};
+  return this.create_spell_hovered_from_data(data);
+};
+
+iorpg.create_spell_greater_heal_pressed = function() {
+  return this.create_spell_pressed(this.IMAGES.GREATER_HEAL_HOVERED);
+}
 
 iorpg.create_spell_push_unhovered = function() {
   var canv = document.createElement("canvas");
@@ -1253,9 +1266,10 @@ iorpg.load_images = function() {
     });
     
     start_load_image(iorpg.IMAGES.SPELL_BACKGROUND, iorpg.create_spell_background, function() {
-      iorpg.resource_loading_counter += 4;
+      iorpg.resource_loading_counter += 6;
       
       load_simple_spell("lesser_heal");
+      load_simple_spell("greater_heal");
       load_simple_spell("push");
       load_simple_spell("block");
       load_simple_spell("shoot");
@@ -1517,6 +1531,7 @@ iorpg.init_spells_from_hero = function(hero) {
       break;
     case this.HEROES.PRIEST:
       result.push(create_from_image_index(this.IMAGES.LESSER_HEAL_STANDARD, this.IMAGES.LESSER_HEAL_HOVERED, this.IMAGES.LESSER_HEAL_PRESSED, 300, create_targeted_spell_fn(0)));
+      result.push(create_from_image_index(this.IMAGES.GREATER_HEAL_STANDARD, this.IMAGES.GREATER_HEAL_HOVERED, this.IMAGES.GREATER_HEAL_PRESSED, 350, create_targeted_spell_fn(1)));
       break;
   }
   return result;
