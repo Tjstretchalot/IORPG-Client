@@ -1531,7 +1531,7 @@ iorpg.init_spells_from_hero = function(hero) {
       break;
     case this.HEROES.PRIEST:
       result.push(create_from_image_index(this.IMAGES.LESSER_HEAL_STANDARD, this.IMAGES.LESSER_HEAL_HOVERED, this.IMAGES.LESSER_HEAL_PRESSED, 300, create_targeted_spell_fn(0)));
-      result.push(create_from_image_index(this.IMAGES.GREATER_HEAL_STANDARD, this.IMAGES.GREATER_HEAL_HOVERED, this.IMAGES.GREATER_HEAL_PRESSED, 350, create_targeted_spell_fn(1)));
+      result.push(create_from_image_index(this.IMAGES.GREATER_HEAL_STANDARD, this.IMAGES.GREATER_HEAL_HOVERED, this.IMAGES.GREATER_HEAL_PRESSED, 400, create_targeted_spell_fn(1)));
       break;
   }
   return result;
