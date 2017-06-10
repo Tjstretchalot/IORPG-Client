@@ -1549,7 +1549,7 @@ iorpg.do_begin_play_game = function(hero, name) {
   this.world.me.hero = hero;
   this.world.me.name = name;
   this.playing_ui_info.spells = this.init_spells_from_hero(hero);
-  this.socket = new WebSocket("ws://73.221.43.61:8081/Play")
+  this.socket = new WebSocket("ws://localhost:8081/Play")
   this.socket.onopen = function() {
     iorpg.socket_onopen.apply(iorpg, arguments);
   };
