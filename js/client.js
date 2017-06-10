@@ -1549,7 +1549,7 @@ iorpg.do_begin_play_game = function(hero, name) {
   this.world.me.hero = hero;
   this.world.me.name = name;
   this.playing_ui_info.spells = this.init_spells_from_hero(hero);
-  this.socket = new WebSocket("ws://localhost:8081/Play");
+  this.socket = new WebSocket("ws://73.221.43.61:8081/Play")
   this.socket.onopen = function() {
     iorpg.socket_onopen.apply(iorpg, arguments);
   };
@@ -1902,8 +1902,8 @@ iorpg.draw_entities = function(phase_num) {
       this.ctx.drawImage(hero_image, screen_x, screen_y);
       this.ctx.drawImage(weapon_image, screen_x + weapon_offset_x, screen_y + weapon_offset_y);
       
-      var old_blocked;
-      var new_blocked;
+      var old_blocked = false;
+      var new_blocked = false;
       
       if(e.modifiers) {
         old_blocked = e.modifiers.filter(function(m) { return !!m.blocked; })[0];
