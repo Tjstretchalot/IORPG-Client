@@ -1126,13 +1126,13 @@ iorpg.create_spell_push_unhovered = function() {
   
   ctx.fillStyle = "#BFB";
   ctx.strokeStyle = "#000";
-  ctx.moveTo(31, 5);
-  ctx.lineTo(49, 31);
-  ctx.lineTo(38, 31);
-  ctx.lineTo(41, 58);
-  ctx.lineTo(21, 58);
-  ctx.lineTo(24, 31);
-  ctx.lineTo(13, 31);
+  ctx.moveTo(31, 10);
+  ctx.lineTo(49, 26);
+  ctx.lineTo(38, 26);
+  ctx.lineTo(41, 48);
+  ctx.lineTo(21, 48);
+  ctx.lineTo(24, 26);
+  ctx.lineTo(13, 26);
   ctx.closePath();
   ctx.fill();
   ctx.stroke();
@@ -1178,7 +1178,7 @@ iorpg.create_spell_block_unhovered = function() {
   canv.height = 64;
   
   ctx.drawImage(this.images[this.IMAGES.SPELL_BACKGROUND], 0, 0);
-  this.draw_shield(ctx, 5, 5, 54, 54, "#BBF", "#000");
+  this.draw_shield(ctx, 15, 15, 34, 34, "#BBF", "#000");
   
   ctx.font = this.fonts[this.FONTS.SMALL_TITLE].font;
   ctx.fillStyle = "#333";
