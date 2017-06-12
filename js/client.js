@@ -1482,7 +1482,7 @@ iorpg.handle_mouse_released_select_hero = function() {
 iorpg.handle_mouse_released_playing = function() {};
 
 iorpg.init_spells_from_hero = function(hero) {
-  function create_from_image_index(index_stnd, index_hov, index_pres, radius, handle_mouse_state_fn) {
+  function create_from_image_index(index_stnd, index_hov, index_pres, radius, handle_input_fns) {
     var img_stnd = iorpg.images[index_stnd];
     var img_hov = iorpg.images[index_hov];
     var img_pres = iorpg.images[index_pres];
@@ -1506,16 +1506,19 @@ iorpg.init_spells_from_hero = function(hero) {
         handle_mouse_state: function() {
           this.hovered = iorpg.image_contains(this.icon_standard.img, this.translate.x + this.icon_standard.translate.x, this.translate.y + this.icon_standard.translate.y, iorpg.mouse_pos.x, iorpg.mouse_pos.y);
           
-          handle_mouse_state_fn.apply(this, arguments);
+          handle_input_fns[0].apply(this, arguments);
+        },
+        handle_key_up: function(c) {
+          handle_input_fns[1].apply(this, [ c ]);
         }
     };
   };
   
   function create_targeted_spell_fn(index) {
-    return function() {
-      if(this.hovered && iorpg.mouse_left_down) {
+    var on_used_fn = function(){ 
+      if(!this.trying_to_use) {
         this.trying_to_use = true;
-      }else if(iorpg.mouse_left_down && this.trying_to_use) {
+      }else {
         this.trying_to_use = false;
         
         var target_x = iorpg.mouse_pos.x + iorpg.camera.translate.x;
@@ -1524,14 +1527,34 @@ iorpg.init_spells_from_hero = function(hero) {
         iorpg.socket.send(JSON.stringify([ iorpg.SOCKET_MESSAGE_TYPES.CAST_SPELL, index, { x: target_x, y: target_y }]));
       }
     };
+    return [ function() {
+      if(this.hovered && iorpg.mouse_left_down) {
+        on_used_fn();
+      }else if(iorpg.mouse_left_down && this.trying_to_use) {
+        on_used_fn()
+      }
+    }, function(c) {
+      var asIndex = c - '1'.charCodeAt(0);
+      if(asIndex == index) 
+        this.trying_to_use = !this.trying_to_use;
+    } ];
   }
   
   function create_untargeted_spell_fn(index) {
-    return function() {
+    var on_used_fn = function() {
+      iorpg.socket.send(JSON.stringify([ iorpg.SOCKET_MESSAGE_TYPES.CAST_SPELL, index ]));
+    } 
+    
+    return [ function() {
       if(this.hovered && iorpg.mouse_left_down) {
-        iorpg.socket.send(JSON.stringify([ iorpg.SOCKET_MESSAGE_TYPES.CAST_SPELL, index ]));
+        on_used_fn();
       }
-    }
+    }, function(c) {
+      var asIndex = c - '1'.charCodeAt(0);
+      if(asIndex == index) {
+        on_used_fn();
+      }
+    } ];
   }
   var result = [];
   switch(hero) {
@@ -1652,6 +1675,11 @@ iorpg.handle_key_up = function(ev) {
       break;
     case 83: // S
       this.socket.send(JSON.stringify([this.SOCKET_MESSAGE_TYPES.STOP_MOVE, this.DIRECTIONS.DOWN]));
+      break;
+    default:
+      for(var i = 0; i < this.playing_ui_info.spells.length; i++) {
+        this.playing_ui_info.spells[i].handle_key_up(code);
+      }
       break;
   }
 };
