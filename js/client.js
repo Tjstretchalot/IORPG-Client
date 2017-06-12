@@ -1046,6 +1046,19 @@ iorpg.create_spell_greater_heal_pressed = function() {
   return this.create_spell_pressed(this.IMAGES.GREATER_HEAL_HOVERED);
 }
 
+iorpg.create_spell_healing_strike_unhovered = function() {
+  return this.create_spell_needs_art();
+};
+
+iorpg.create_spell_healing_strike_hovered = function() {
+  var data = {"width":188,"height":147,"image_index_str":"HEALING_STRIKE_STANDARD","ellipse":{"x":99,"y":37,"width":87,"height":35},"title":{"x":48,"y":23,"text":"HEALING STRIKE"},"description":[{"x":29,"y":40,"text":"Heal all friends in a small"},{"x":36,"y":55,"text":"radius a large amount"}],"v_bottom":{"x":50,"y":81},"v_0":{"x":50,"y":67},"v_1":{"x":57,"y":69}};
+  return this.create_spell_hovered_from_data(data);
+};
+
+iorpg.create_spell_healing_strike_pressed = function() {
+  return this.create_spell_pressed(this.IMAGES.HEALING_STRIKE_HOVERED);
+}
+
 iorpg.create_spell_push_unhovered = function() {
   var canv = document.createElement("canvas");
   var ctx = canv.getContext("2d");
@@ -1270,6 +1283,7 @@ iorpg.load_images = function() {
       
       load_simple_spell("lesser_heal");
       load_simple_spell("greater_heal");
+      load_simple_spell("healing_strike");
       load_simple_spell("push");
       load_simple_spell("block");
       load_simple_spell("shoot");
@@ -1532,6 +1546,18 @@ iorpg.init_spells_from_hero = function(hero) {
     case this.HEROES.PRIEST:
       result.push(create_from_image_index(this.IMAGES.LESSER_HEAL_STANDARD, this.IMAGES.LESSER_HEAL_HOVERED, this.IMAGES.LESSER_HEAL_PRESSED, 300, create_targeted_spell_fn(0)));
       result.push(create_from_image_index(this.IMAGES.GREATER_HEAL_STANDARD, this.IMAGES.GREATER_HEAL_HOVERED, this.IMAGES.GREATER_HEAL_PRESSED, 400, create_targeted_spell_fn(1)));
+      
+      var tmp = create_from_image_index(this.IMAGES.HEALING_STRIKE_STANDARD, this.IMAGES.HEALING_STRIKE_HOVERED, this.IMAGES.HEALING_STRIKE_PRESSED, 300, create_targeted_spell_fn(2));
+      tmp.draw_ui = function() {
+        if(this.trying_to_use) {
+          iorpg.ctx.strokeStyle = '#F00';
+          iorpg.ctx.beginPath();
+          iorpg.ctx.ellipse(iorpg.mouse_pos.x, iorpg.mouse_pos.y, 150, 150, 0, 0, Math.PI * 2, false);
+          iorpg.ctx.stroke();
+        }
+      };
+      result.push(tmp);
+      
       break;
   }
   return result;
@@ -2027,6 +2053,15 @@ iorpg.clean_minimap = function() {
 
 iorpg.draw_playing_ui = function() {
   var act_index = -1;
+  
+  for(var i = 0; i < this.playing_ui_info.spells.length; i++) {
+    var spl = this.playing_ui_info.spells[i];
+    
+    if(spl.draw_ui) {
+      spl.draw_ui();
+    }
+  }
+  
   for(var i = 0; i < this.playing_ui_info.spells.length; i++) {
     var spl = this.playing_ui_info.spells[i];
     if(spl.trying_to_use)
