@@ -1107,7 +1107,7 @@ iorpg.create_spell_healing_strike_unhovered = function() {
 };
 
 iorpg.create_spell_healing_strike_hovered = function() {
-  var data = {"width":188,"height":147,"image_index_str":"HEALING_STRIKE_STANDARD","ellipse":{"x":99,"y":37,"width":87,"height":35},"title":{"x":48,"y":23,"text":"HEALING STRIKE"},"description":[{"x":29,"y":40,"text":"Heal all friends in a small"},{"x":36,"y":55,"text":"radius a large amount"}],"v_bottom":{"x":50,"y":81},"v_0":{"x":50,"y":67},"v_1":{"x":57,"y":69}};
+  var data = {"width":188,"height":147,"image_index_str":"HEALING_STRIKE_STANDARD","ellipse":{"x":99,"y":37,"width":87,"height":35},"title":{"x":48,"y":23,"text":"HEALING STRIKE"},"description":[{"x":29,"y":40,"text":"Heal all friends in a small"},{"x":36,"y":55,"text":"radius a large amount"}],"v_bottom":{"x":50,"y":81},"v_0":{"x":50,"y":65},"v_1":{"x":58,"y":67}};
   return this.create_spell_hovered_from_data(data);
 };
 
