@@ -1021,6 +1021,10 @@ iorpg.create_spell_lesser_heal_unhovered = function() {
   ctx.fill();
   ctx.stroke();
   
+  ctx.font = this.fonts[this.FONTS.SMALL_TITLE].font;
+  ctx.fillStyle = "#333";
+  ctx.fillText("1", 5, 15);
+  
   return canv;
 };
 
@@ -1034,7 +1038,30 @@ iorpg.create_spell_lesser_heal_pressed = function() {
 };
 
 iorpg.create_spell_greater_heal_unhovered = function() {
-  return this.create_spell_needs_art();
+  var canv = document.createElement("canvas");
+  var ctx = canv.getContext("2d");
+  
+  canv.width = 64;
+  canv.height = 64;
+  
+  ctx.drawImage(this.images[this.IMAGES.SPELL_BACKGROUND], 0, 0);
+  ctx.fillStyle = "#F00";
+  ctx.strokeStyle = "#000";
+  
+  ctx.beginPath();
+  ctx.moveTo(14, 14);
+  ctx.bezierCurveTo(20, 11, 31, 14, 31, 17);
+  ctx.bezierCurveTo(31, 14, 44, 11, 50, 14);
+  ctx.bezierCurveTo(60, 19, 41, 45, 31, 50);
+  ctx.bezierCurveTo(21, 45, 4, 19, 14, 14);
+  ctx.fill();
+  ctx.stroke();
+  
+  ctx.font = this.fonts[this.FONTS.SMALL_TITLE].font;
+  ctx.fillStyle = "#333";
+  ctx.fillText("2", 5, 15);
+  
+  return canv;
 };
 
 iorpg.create_spell_greater_heal_hovered = function() {
@@ -1047,7 +1074,36 @@ iorpg.create_spell_greater_heal_pressed = function() {
 }
 
 iorpg.create_spell_healing_strike_unhovered = function() {
-  return this.create_spell_needs_art();
+  var canv = document.createElement("canvas");
+  var ctx = canv.getContext("2d");
+  
+  canv.width = 64;
+  canv.height = 64;
+  
+  ctx.drawImage(this.images[this.IMAGES.SPELL_BACKGROUND], 0, 0);
+  
+  ctx.strokeStyle = "#ccc";
+  ctx.beginPath();
+  ctx.ellipse(31, 49, 20, 5, 0, 0, Math.PI * 2, false);
+  ctx.stroke();
+  
+  ctx.strokeStyle = "#CC3";
+  ctx.lineWidth = 2;
+  var lines = [ [ 19, 46, 16, 41 ], [ 21, 50, 23, 42 ], [ 28, 46, 20, 33 ], [ 30, 53, 24, 47 ], [ 30, 46, 26, 35 ], [ 35, 52, 30, 32 ], [35, 45, 38, 35 ], [ 38, 46, 48, 27 ], [ 43, 51, 47, 46 ] ]
+  
+  for(var i = 0; i < lines.length; i++) {
+    var arr = lines[i];
+    ctx.beginPath();
+    ctx.moveTo(arr[0], arr[1]);
+    ctx.lineTo(arr[2], arr[3]);
+    ctx.stroke();
+  }
+  
+  ctx.font = this.fonts[this.FONTS.SMALL_TITLE].font;
+  ctx.fillStyle = "#333";
+  ctx.fillText("3", 5, 15);
+  
+  return canv;
 };
 
 iorpg.create_spell_healing_strike_hovered = function() {
@@ -1080,6 +1136,10 @@ iorpg.create_spell_push_unhovered = function() {
   ctx.closePath();
   ctx.fill();
   ctx.stroke();
+  
+  ctx.font = this.fonts[this.FONTS.SMALL_TITLE].font;
+  ctx.fillStyle = "#333";
+  ctx.fillText("1", 5, 15);
   
   return canv;
 };
@@ -1120,6 +1180,10 @@ iorpg.create_spell_block_unhovered = function() {
   ctx.drawImage(this.images[this.IMAGES.SPELL_BACKGROUND], 0, 0);
   this.draw_shield(ctx, 5, 5, 54, 54, "#BBF", "#000");
   
+  ctx.font = this.fonts[this.FONTS.SMALL_TITLE].font;
+  ctx.fillStyle = "#333";
+  ctx.fillText("2", 5, 15);
+  
   return canv;
 };
 
@@ -1147,7 +1211,45 @@ iorpg.create_modifier_blocked = function() {
 };
 
 iorpg.create_spell_shoot_unhovered = function() {
-  return this.create_spell_needs_art();
+  var canv = document.createElement("canvas");
+  var ctx = canv.getContext("2d");
+  
+  canv.width = 64;
+  canv.height = 64;
+  
+  ctx.drawImage(this.images[this.IMAGES.SPELL_BACKGROUND], 0, 0);
+  
+  ctx.strokeStyle = "#000";
+  ctx.lineWidth = 2;
+  
+  ctx.beginPath();
+  ctx.moveTo(11, 32);
+  ctx.lineTo(51, 32);
+  ctx.stroke();
+  
+  ctx.beginPath();
+  ctx.moveTo(44, 25);
+  ctx.lineTo(51, 32);
+  ctx.lineTo(44, 39);
+  ctx.stroke();
+  
+  ctx.strokeStyle = "#fff";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(19, 31);
+  ctx.lineTo(11, 27);
+  ctx.stroke();
+  
+  ctx.beginPath();
+  ctx.moveTo(18, 33);
+  ctx.lineTo(11, 38);
+  ctx.stroke();
+  
+  ctx.font = this.fonts[this.FONTS.SMALL_TITLE].font;
+  ctx.fillStyle = "#333";
+  ctx.fillText("1", 5, 15);
+  
+  return canv;
 };
 
 iorpg.create_spell_shoot_hovered = function() {
@@ -1160,7 +1262,49 @@ iorpg.create_spell_shoot_pressed = function() {
 };
 
 iorpg.create_spell_deliberate_shot_unhovered = function() {
-  return this.create_spell_needs_art();
+  var canv = document.createElement("canvas");
+  var ctx = canv.getContext("2d");
+  
+  canv.width = 64;
+  canv.height = 64;
+  
+  ctx.drawImage(this.images[this.IMAGES.SPELL_BACKGROUND], 0, 0);
+  
+  var y = -20;
+  for(var i = 0; i < 3; i++) {
+    ctx.strokeStyle = "#000";
+    ctx.lineWidth = 2;
+    
+    ctx.beginPath();
+    ctx.moveTo(11, 32 + y);
+    ctx.lineTo(51, 32 + y);
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.moveTo(44, 25 + y);
+    ctx.lineTo(51, 32 + y);
+    ctx.lineTo(44, 39 + y);
+    ctx.stroke();
+    
+    ctx.strokeStyle = "#fff";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(19, 31 + y);
+    ctx.lineTo(11, 27 + y);
+    ctx.stroke();
+    
+    ctx.beginPath();
+    ctx.moveTo(18, 33 + y);
+    ctx.lineTo(11, 38 + y);
+    ctx.stroke();
+    y += 20;
+  }
+  
+  ctx.font = this.fonts[this.FONTS.SMALL_TITLE].font;
+  ctx.fillStyle = "#333";
+  ctx.fillText("2", 5, 15);
+  
+  return canv;
 };
 
 iorpg.create_spell_deliberate_shot_hovered = function() {
@@ -1529,7 +1673,7 @@ iorpg.init_spells_from_hero = function(hero) {
     };
     return [ function() {
       if(this.hovered && iorpg.mouse_left_down) {
-        on_used_fn();
+        this.trying_to_use = true;
       }else if(iorpg.mouse_left_down && this.trying_to_use) {
         on_used_fn()
       }
