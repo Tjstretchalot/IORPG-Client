@@ -73,7 +73,8 @@ var iorpg = {
     "TICK": 2,
     "START_MOVE": 3,
     "STOP_MOVE": 4,
-    "CAST_SPELL": 5
+    "CAST_SPELL": 5,
+    "CHANGE_TICK_RATE": 6
   },
   DIRECTIONS: {
     "RIGHT": 1,
@@ -81,6 +82,7 @@ var iorpg = {
     "UP": 3,
     "DOWN": 4
   },
+  server: "ws://classfight.com:8081/Play",
   game_state: 0,
   images: {},
   fonts: {},
@@ -140,6 +142,10 @@ var iorpg = {
   new_world: { empty: true }, // this is like world but the latest version
   interpolated_timestamp: 0, // what timestamp have we interpolated to
   interpolation_factor: 1,
+  missed_frames_counter: 0,
+  missed_frames_this_tick_counter: 0,
+  no_missed_frames_counter: 0,
+  recently_increased_tick_rate_counter: 5,
   last_draw_time: 0.0,
   camera: {
     translate: { x: 0, y: 0 },
@@ -1754,7 +1760,7 @@ iorpg.do_begin_play_game = function(hero, name) {
   this.world.me.hero = hero;
   this.world.me.name = name;
   this.playing_ui_info.spells = this.init_spells_from_hero(hero);
-  this.socket = new WebSocket("ws://classfight.com:8081/Play")
+  this.socket = new WebSocket(this.server)
   this.socket.onopen = function() {
     iorpg.socket_onopen.apply(iorpg, arguments);
   };
@@ -1860,6 +1866,32 @@ iorpg.handle_world_update = function(new_world) {
     this.world = tmp;
     if(this.interpolated_timestamp != this.world.timestamp) {
       this.interpolated_timestamp = this.world.timestamp;
+    }
+    
+    if(this.recently_increased_tick_rate_counter > 0) {
+      this.recently_increased_tick_rate_counter --;
+      this.missed_frames_counter = 0;
+      this.missed_frames_this_tick_counter = 0;
+      this.no_missed_frames_counter = 0;
+    }else {
+      if(this.missed_frames_this_tick_counter == 0) {
+        this.no_missed_frames_counter++;
+        if(this.no_missed_frames_counter > 1000) {
+          this.missed_frames_counter = 0;
+          this.no_missed_frames_counter = 0;
+        }
+      }else {
+        this.missed_frames_counter += this.missed_frames_this_tick_counter - 1;
+        this.no_missed_frames_counter = 0;
+        
+        if(this.missed_frames_counter > 10) { // 1% missed frames is acceptable
+          console.log("detected network lag, attempting to reduce tick rate");
+          this.recently_increased_tick_rate_counter = 5;
+          this.socket.send(JSON.stringify([ this.SOCKET_MESSAGE_TYPES.CHANGE_TICK_RATE, true ]));
+          this.missed_frames_counter = 0;
+        }
+      }
+      this.missed_frames_this_tick_counter = 0;
     }
     
     if(this.new_world.minimap_markers) {
@@ -2055,7 +2087,7 @@ iorpg.draw_cachable_text = function(ctx, text, x, y, font_index, center_x) {
       var size = this.create_cachable_text(text, font_index, curr_timestamp, ind, oldest_index);
     }
   }else {
-    var _font = thsi.fonts[font_index];
+    var _font = this.fonts[font_index];
     if(text.length < 20) 
       var metr = _font.measure_height(text);
     else
@@ -2360,6 +2392,8 @@ iorpg.anim_frame_requested = function(timestamp) {
         break;
       if(this.interpolated_timestamp != this.new_world.timestamp) {
         this.interpolated_timestamp = Math.min(this.interpolated_timestamp + delta_time * this.interpolation_factor, this.new_world.timestamp);
+      }else {
+        this.missed_frames_this_tick_counter++;
       }
       
       this.update_camera();
