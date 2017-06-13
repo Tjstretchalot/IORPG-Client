@@ -1660,27 +1660,24 @@ iorpg.init_spells_from_hero = function(hero) {
   
   function create_targeted_spell_fn(index) {
     var on_used_fn = function(){ 
-      if(!this.trying_to_use) {
-        this.trying_to_use = true;
-      }else {
-        this.trying_to_use = false;
-        
-        var target_x = iorpg.mouse_pos.x + iorpg.camera.translate.x;
-        var target_y = iorpg.mouse_pos.y + iorpg.camera.translate.y;
-        
-        iorpg.socket.send(JSON.stringify([ iorpg.SOCKET_MESSAGE_TYPES.CAST_SPELL, index, { x: target_x, y: target_y }]));
-      }
+      var target_x = iorpg.mouse_pos.x + iorpg.camera.translate.x;
+      var target_y = iorpg.mouse_pos.y + iorpg.camera.translate.y;
+      
+      iorpg.socket.send(JSON.stringify([ iorpg.SOCKET_MESSAGE_TYPES.CAST_SPELL, index, { x: target_x, y: target_y }]));
     };
     return [ function() {
       if(this.hovered && iorpg.mouse_left_down) {
         this.trying_to_use = true;
       }else if(iorpg.mouse_left_down && this.trying_to_use) {
         on_used_fn()
+        this.trying_to_use = false;
       }
     }, function(c) {
       var asIndex = c - '1'.charCodeAt(0);
       if(asIndex == index) 
         this.trying_to_use = !this.trying_to_use;
+      else
+        this.trying_to_use = false;
     } ];
   }
   
@@ -1757,7 +1754,7 @@ iorpg.do_begin_play_game = function(hero, name) {
   this.world.me.hero = hero;
   this.world.me.name = name;
   this.playing_ui_info.spells = this.init_spells_from_hero(hero);
-  this.socket = new WebSocket("ws://localhost:8081/Play")
+  this.socket = new WebSocket("ws://classfight.com:8081/Play")
   this.socket.onopen = function() {
     iorpg.socket_onopen.apply(iorpg, arguments);
   };
@@ -1798,7 +1795,7 @@ iorpg.socket_onerror = function(ev) {
 
 iorpg.socket_onclose = function(ev) {
   console.log("socket_onclose");
-  this.game_state = this.GAME_STATES.SELECT_HERO;
+  this.change_game_state(this.GAME_STATES.SELECT_HERO);
 }
 
 iorpg.handle_key_up = function(ev) {
@@ -1888,6 +1885,14 @@ iorpg.change_game_state = function(new_state) {
   this.game_state = new_state;
   this.position_current();
   this.handle_mouse_state();
+  
+  var moregames = document.getElementById("moregames");
+  if(this.game_state == this.GAME_STATES.SELECT_HERO)
+  {
+    moregames.style.visibility = 'visible';
+  }else {
+    moregames.style.visibility = 'hidden';
+  }
 }
 
 iorpg.update_camera = function() {
@@ -2268,6 +2273,39 @@ iorpg.draw_playing_ui = function() {
   }
 };
 
+iorpg.draw_floor = function() {
+  var gridSize = 300;
+  var min_x = this.camera.translate.x;
+  min_x %= gridSize;
+  min_x = -min_x;
+  if(min_x < 0)
+    min_x += gridSize;
+  var min_y = this.camera.translate.y;
+  min_y %= gridSize;
+  min_y = -min_y;
+  if(min_y < 0)
+    min_y += gridSize;
+  
+  
+  
+  this.ctx.strokeStyle = '#000';
+  this.ctx.lineWidth = 1;
+  this.ctx.globalAlpha = 0.5;
+  for(var y = min_y; y < this.canvas.height; y += gridSize) {
+    this.ctx.beginPath();
+    this.ctx.moveTo(0, y);
+    this.ctx.lineTo(this.canvas.width, y);
+    this.ctx.stroke();
+  }
+  for(var x = min_x; x < this.canvas.width; x += gridSize) {
+    this.ctx.beginPath();
+    this.ctx.moveTo(x, 0);
+    this.ctx.lineTo(x, this.canvas.height);
+    this.ctx.stroke();
+  }
+  this.ctx.globalAlpha = 1.0;
+};
+
 iorpg.anim_frame_requested = function(timestamp) {
   window.requestAnimationFrame(function() { iorpg.anim_frame_requested.apply(iorpg, arguments); });
   var delta_time = 0;
@@ -2325,6 +2363,7 @@ iorpg.anim_frame_requested = function(timestamp) {
       }
       
       this.update_camera();
+      this.draw_floor();
       this.draw_entities(1);
       this.draw_entities(2);
       this.draw_playing_ui();
