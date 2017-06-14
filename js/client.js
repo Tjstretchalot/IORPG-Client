@@ -82,6 +82,7 @@ var iorpg = {
     "UP": 3,
     "DOWN": 4
   },
+  //server: "ws://73.221.43.61:8081/Play",
   server: "ws://classfight.com:8081/Play",
   game_state: 0,
   images: {},
@@ -142,6 +143,9 @@ var iorpg = {
   new_world: { empty: true }, // this is like world but the latest version
   interpolated_timestamp: 0, // what timestamp have we interpolated to
   interpolation_factor: 1,
+  allow_reduce_tick_rate: false,
+  max_reduce_tick_rate: 1,
+  reduced_tick_rate_times: 0,
   missed_frames_counter: 0,
   missed_frames_this_tick_counter: 0,
   no_missed_frames_counter: 0,
@@ -1884,7 +1888,8 @@ iorpg.handle_world_update = function(new_world) {
         this.missed_frames_counter += this.missed_frames_this_tick_counter - 1;
         this.no_missed_frames_counter = 0;
         
-        if(this.missed_frames_counter > 10) { // 1% missed frames is acceptable
+        if(this.missed_frames_counter > 10 && this.allow_reduce_tick_rate && this.reduced_tick_rate_times < this.max_reduce_tick_rate) { // 1% missed frames is acceptable
+          this.reduced_tick_rate_times++
           console.log("detected network lag, attempting to reduce tick rate");
           this.recently_increased_tick_rate_counter = 5;
           this.socket.send(JSON.stringify([ this.SOCKET_MESSAGE_TYPES.CHANGE_TICK_RATE, true ]));
