@@ -2229,9 +2229,9 @@ iorpg.clean_minimap = function() {
   ctx.fillStyle = "#eee";
   ctx.beginPath();
   ctx.moveTo(2, 2);
-  ctx.lineTo(this.minimap.width + 4, 2);
-  ctx.lineTo(this.minimap.width + 4, this.minimap.height + 4);
-  ctx.lineTo(2, this.minimap.height + 4);
+  ctx.lineTo(this.minimap.width + 2, 2);
+  ctx.lineTo(this.minimap.width + 2, this.minimap.height + 2);
+  ctx.lineTo(2, this.minimap.height + 2);
   ctx.closePath();
   ctx.stroke();
   ctx.fill();
@@ -2391,7 +2391,7 @@ iorpg.anim_frame_requested = function(timestamp) {
       if(!(this.world.me.id in this.world.ids_to_indexes))
         break;
       if(this.interpolated_timestamp != this.new_world.timestamp) {
-        this.interpolated_timestamp = Math.min(this.interpolated_timestamp + delta_time * this.interpolation_factor, this.new_world.timestamp);
+        this.interpolated_timestamp = Math.min(this.interpolated_timestamp + delta_time * this.world.interpolation_factor, this.new_world.timestamp);
       }else {
         this.missed_frames_this_tick_counter++;
       }
